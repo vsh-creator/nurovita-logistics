@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nurovita — Zipscale vs Rapid</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f4f8; color: #1e293b; padding: 24px; max-width: 1300px; margin: 0 auto; }
+  h1 { font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 3px; }
+  .subtitle { font-size: 12px; color: #64748b; margin-bottom: 22px; }
+  .section-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: #64748b; margin: 28px 0 10px; }
+
+  .grid { display: grid; gap: 12px; }
+  .g2 { grid-template-columns: repeat(2,1fr); }
+  .g3 { grid-template-columns: repeat(3,1fr); }
+  .g4 { grid-template-columns: repeat(4,1fr); }
+  .g5 { grid-template-columns: repeat(5,1fr); }
+  @media(max-width:1000px){ .g5,.g4{grid-template-columns:repeat(2,1fr);} .g3{grid-template-columns:repeat(2,1fr);} }
+  @media(max-width:600px){ .g5,.g4,.g3,.g2{grid-template-columns:1fr;} }
+
+  /* TILES */
+  .tile { background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.05); }
+  .tile-lbl { font-size:11px; color:#64748b; margin-bottom:4px; }
+  .tile-val { font-size:24px; font-weight:800; line-height:1; }
+  .tile-sub { font-size:10px; color:#94a3b8; margin-top:3px; }
+  .tile.g { border-color:#bbf7d0; background:#f0fdf4; } .tile.g .tile-val { color:#15803d; }
+  .tile.r { border-color:#fecaca; background:#fff1f2; } .tile.r .tile-val { color:#dc2626; }
+  .tile.b { border-color:#bfdbfe; background:#eff6ff; } .tile.b .tile-val { color:#1d4ed8; }
+  .tile.o { border-color:#fed7aa; background:#fff7ed; } .tile.o .tile-val { color:#c2410c; }
+  .tile.y { border-color:#fde68a; background:#fefce8; } .tile.y .tile-val { color:#92400e; }
+
+  /* CARD */
+  .card { background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:16px 18px; box-shadow:0 1px 3px rgba(0,0,0,.05); }
+  .card h3 { font-size:13px; font-weight:700; color:#0f172a; margin-bottom:12px; }
+
+  /* FIELDS */
+  .fr { display:grid; gap:10px; margin-bottom:10px; }
+  .fr.c3 { grid-template-columns:1fr 1fr 1fr; }
+  .fr.c4 { grid-template-columns:1fr 1fr 1fr 1fr; }
+  @media(max-width:800px){ .fr.c3,.fr.c4{ grid-template-columns:1fr 1fr; } }
+  .f { display:flex; flex-direction:column; gap:4px; }
+  .f label { font-size:10px; color:#64748b; font-weight:700; text-transform:uppercase; letter-spacing:.6px; }
+  .f input, .f select { border:1px solid #e2e8f0; border-radius:6px; padding:7px 10px; font-size:13px; font-weight:600; color:#0f172a; background:#fafafa; outline:none; transition:border-color .15s; width:100%; }
+  .f input:focus, .f select:focus { border-color:#3b82f6; background:#fff; }
+  .f .hint { font-size:9px; color:#94a3b8; line-height:1.4; }
+
+  /* VS CARDS */
+  .vc { background:#fff; border:2px solid #e2e8f0; border-radius:14px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,.06); }
+  .vc.zs-win { border-color:#22c55e; }
+  .vc.rp-win { border-color:#f59e0b; }
+  .vc-head { padding:14px 16px 12px; border-bottom:1px solid #e2e8f0; text-align:center; }
+  .vc-head h3 { font-size:14px; font-weight:800; margin-bottom:2px; }
+  .vc-head .wt { font-size:11px; color:#64748b; }
+  .vc-side { padding:14px 16px; }
+  .vc-side-lbl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#94a3b8; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+  .vc-side-lbl::after { content:''; flex:1; height:1px; background:#f1f5f9; }
+  .vc-price { font-size:34px; font-weight:900; line-height:1; margin-bottom:4px; }
+  .vc-mo { font-size:12px; color:#64748b; margin-bottom:8px; }
+  .vc-lines { display:flex; flex-direction:column; gap:3px; }
+  .vc-line { display:flex; justify-content:space-between; font-size:11px; color:#64748b; }
+  .vc-line .vl { color:#94a3b8; }
+  .vc-line .vv { font-weight:600; color:#475569; }
+  .vc-line.vl-total { border-top:1px solid #f1f5f9; padding-top:4px; margin-top:3px; }
+  .vc-line.vl-total .vl { font-weight:700; color:#0f172a; }
+  .vc-line.vl-total .vv { font-weight:800; font-size:12px; color:#0f172a; }
+  .vc-divider { display:flex; align-items:center; gap:10px; padding:0 16px; }
+  .vc-divider::before,.vc-divider::after { content:''; flex:1; height:1px; background:#e2e8f0; }
+  .vc-divider span { font-size:10px; font-weight:700; color:#94a3b8; background:#fff; padding:2px 6px; border:1px solid #e2e8f0; border-radius:20px; }
+  .vc-result { margin:10px 14px 14px; border-radius:8px; padding:10px 14px; text-align:center; }
+  .vc-result.save { background:#f0fdf4; border:1px solid #bbf7d0; }
+  .vc-result.extra { background:#fff7ed; border:1px solid #fed7aa; }
+  .vc-result.even { background:#fefce8; border:1px solid #fde68a; }
+  .vc-result .rv { font-size:17px; font-weight:900; }
+  .vc-result .rl { font-size:10px; font-weight:600; margin-top:2px; }
+  .vc-result.save .rv,.vc-result.save .rl { color:#15803d; }
+  .vc-result.extra .rv,.vc-result.extra .rl { color:#c2410c; }
+  .vc-result.even .rv,.vc-result.even .rl { color:#92400e; }
+
+  /* COMP TABLE */
+  .tw { background:#fff; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,.05); }
+  .comp { width:100%; border-collapse:collapse; font-size:12px; }
+  .comp th { background:#f8fafc; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.7px; color:#64748b; padding:9px 14px; text-align:left; border-bottom:1px solid #e2e8f0; }
+  .comp td { padding:9px 14px; border-bottom:1px solid #f1f5f9; vertical-align:middle; }
+  .comp tr:last-child td { border-bottom:none; }
+  .best { color:#15803d; font-weight:800; }
+  .worst { color:#dc2626; }
+
+  /* CARRIER PILLS */
+  .carrier-tabs { display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
+  .ctab { padding:5px 13px; border:1.5px solid #e2e8f0; border-radius:20px; font-size:11px; font-weight:600; cursor:pointer; background:#fff; color:#475569; transition:all .15s; }
+  .ctab.active { background:#0f172a; color:#fff; border-color:#0f172a; }
+
+  /* REC */
+  .rec { border-radius:12px; padding:18px 20px; }
+  .rec h3 { font-size:14px; font-weight:700; margin-bottom:6px; }
+  .rec p { font-size:12px; color:#475569; line-height:1.75; }
+  .rec.g { background:#f0fdf4; border:1px solid #bbf7d0; } .rec.g h3 { color:#15803d; }
+  .rec.y { background:#fefce8; border:1px solid #fde68a; } .rec.y h3 { color:#92400e; }
+
+  /* FEE TABLE */
+  .fee-row { display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid #f1f5f9; font-size:12px; }
+  .fee-row:last-child { border-bottom:none; }
+  .fee-row .fn { color:#64748b; }
+  .fee-row .fv { font-weight:700; }
+  .fee-row .fv.r { color:#dc2626; }
+  .fee-row .fv.g { color:#15803d; }
+
+  .badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:700; }
+  .badge-g { background:#dcfce7; color:#15803d; }
+  .badge-r { background:#fff1f2; color:#dc2626; }
+  .badge-y { background:#fefce8; color:#92400e; }
+  .alert { background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:10px 14px; font-size:12px; color:#1e40af; }
+</style>
+</head>
+<body>
+
+<h1>Nurovita — Zipscale vs Rapid</h1>
+<p class="subtitle">3PL Cost Comparison · US fulfillment · All USD · Zone 5 (average US distance)</p>
+
+<!-- OUTCOME BANNER -->
+<div id="banner" style="margin-bottom:20px;"></div>
+
+<!-- SETTINGS -->
+<div class="section-title">Settings</div>
+<div class="card">
+  <div class="fr c4">
+    <div class="f">
+      <label>Monthly Orders</label>
+      <input type="number" id="moOrd" value="2100" step="50" oninput="calc()">
+      <span class="hint">Orders shipped per month</span>
+    </div>
+    <div class="f">
+      <label>Avg Units / Order</label>
+      <input type="number" id="avgUnits" value="2.27" step="0.1" min="1" oninput="calc()">
+      <span class="hint">Weighted avg from real orders</span>
+    </div>
+    <div class="f">
+      <label>Pallets in Warehouse</label>
+      <input type="number" id="pallets" value="12" step="1" min="1" oninput="calc()">
+      <span class="hint">Current pallet count</span>
+    </div>
+    <div class="f">
+      <label>Rapid Carrier</label>
+      <select id="carrier" onchange="calc()">
+        <option value="dhld">DHL Ground D (3–8 days) — cheapest</option>
+        <option value="dhl">DHL Ground Exp (2–5 days)</option>
+        <option value="osm">OSM Exp Parcel (2–5 days)</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- KPI TILES -->
+<div class="section-title">Summary — Current Settings</div>
+<div class="grid g4" id="kpiTiles"></div>
+
+<!-- CARRIER TOGGLE for comparison cards -->
+<div class="section-title">Per-Order Cost Breakdown</div>
+
+<!-- COMPARISON CARDS -->
+<div class="grid g3" id="mainGrid"></div>
+
+<!-- SUMMARY TABLE -->
+<div class="section-title">Monthly Summary Table</div>
+<div class="tw">
+  <table class="comp" id="summaryTable">
+    <thead>
+      <tr>
+        <th>Metric</th>
+        <th>1 Unit (4oz)</th>
+        <th>2 Units (7oz)</th>
+        <th>3 Units (10oz)</th>
+        <th>Blended (real mix)</th>
+      </tr>
+    </thead>
+    <tbody id="summaryBody"></tbody>
+  </table>
+</div>
+
+<!-- STORAGE + FEES -->
+<div class="section-title">Storage &amp; One-Off Fees</div>
+<div class="grid g2">
+  <div class="card">
+    <h3>📦 Storage Comparison</h3>
+    <div id="storageComp"></div>
+  </div>
+  <div class="card">
+    <h3>⚠️ Rapid — Extra Fees Not in Zipscale</h3>
+    <div id="rapidFees"></div>
+    <div class="alert" style="margin-top:12px;" id="rapidUpfront"></div>
+  </div>
+</div>
+
+<!-- RECOMMENDATION -->
+<div class="section-title">Recommendation</div>
+<div id="rec" class="rec g">
+  <h3 id="rec-title"></h3>
+  <p id="rec-body"></p>
+</div>
+
+<p style="font-size:10px;color:#94a3b8;margin-top:24px;text-align:center;">
+  Zipscale rates: Rocco Lerario pricing sheet Feb 2026 · Rapid rates: Rate Card Michael 2026 · Zone 5 (middle US)
+</p>
+
+<script>
+// ─── ZIPSCALE DATA ────────────────────────────────────────────────
+// From Rocco's pricing sheet (Zone 5)
+const ZS_SHIP = { 4:4.52, 7:4.69, 10:4.83 };
+
+const ZS = {
+  1: { pp:1.25, add:0.00, card:0.25, pkg:0.25, get ship(){ return ZS_SHIP[4]; }, get total(){ return this.pp+this.add+this.card+this.pkg+ZS_SHIP[4]; } },
+  2: { pp:1.25, add:0.25, card:0.25, pkg:0.25, get ship(){ return ZS_SHIP[7]; }, get total(){ return this.pp+this.add+this.card+this.pkg+ZS_SHIP[7]; } },
+  3: { pp:1.25, add:0.50, card:0.25, pkg:0.25, get ship(){ return ZS_SHIP[10]; }, get total(){ return this.pp+this.add+this.card+this.pkg+ZS_SHIP[10]; } },
+};
+const ZS_STORAGE   = 20;   // per pallet/month
+const ZS_RECEIVING = 8;    // per pallet one-time
+
+// ─── RAPID DATA ──────────────────────────────────────────────────
+// Schedule C (per order)
+const RP_PACK  = 0.90;
+const RP_PICK  = 0.30;  // extra per additional unit
+const RP_INSERT = 0.25; // thank you card / insert
+
+// DHL Ground D Zone 5 — cheapest (3-8 days, by oz)
+const RP_DHLD = { 4:5.63, 7:6.17, 10:6.59 };
+// DHL Ground Exp Zone 5 (2-5 days, by oz)
+const RP_DHL = { 4:5.70, 7:6.28, 10:7.11 };
+// OSM Exp Parcel Zone 5 (2-5 days, by oz)
+const RP_OSM = { 4:6.05, 7:6.22, 10:6.35 };
+
+const RP_STORAGE_ACTIVE   = 25;    // per pallet/month
+const RP_STORAGE_INACTIVE = 82.50; // per pallet/month >45 days
+const RP_RECEIVING_FREE_MAX = 6;   // free if ≤6 pallets
+const RP_RECEIVING_TRUCK = 165;    // if >6 pallets
+const RP_MIN_FEE   = 165;  // if <100 orders/month
+const RP_SETUP     = 363;  // one-time (3hr @ $121)
+const RP_DEPOSIT   = 1500; // one-time shipping deposit
+
+// ─── REAL ORDER MIX ──────────────────────────────────────────────
+const MIX = [
+  { sz:1, pct:0.291 },
+  { sz:2, pct:0.368 },
+  { sz:3, pct:0.245 },
+];
+
+// ─── HELPERS ─────────────────────────────────────────────────────
+const OZ = { 1:4, 2:7, 3:10 };
+const WGT = { 1:'95g · 4oz', 2:'186g · 7oz', 3:'264g · 10oz' };
+const LABEL = { 1:'1 Unit', 2:'2 Units', 3:'3 Units' };
+const f2 = n => '$' + n.toFixed(2);
+const fi = n => '$' + Math.round(n).toLocaleString();
+
+function rpShip(sz, carrier) {
+  const tbl = carrier === 'osm' ? RP_OSM : carrier === 'dhld' ? RP_DHLD : RP_DHL;
+  return tbl[OZ[sz]];
+}
+
+function rpTotal(sz, carrier) {
+  const extraPicks = sz - 1;
+  return rpShip(sz, carrier) + RP_PACK + RP_INSERT + (extraPicks * RP_PICK);
+}
+
+function zsTotal(sz) {
+  return ZS[sz].total;
+}
+
+// ─── MAIN CALC ───────────────────────────────────────────────────
+function calc() {
+  const moOrd   = parseFloat(document.getElementById('moOrd').value)   || 0;
+  const avgUnits= parseFloat(document.getElementById('avgUnits').value) || 1;
+  const pallets = parseFloat(document.getElementById('pallets').value)  || 1;
+  const carrier = document.getElementById('carrier').value;
+  const carrierLabel = carrier === 'osm' ? 'OSM (2–5 days)' : carrier === 'dhld' ? 'DHL Ground D (3–8 days)' : 'DHL Ground Exp (2–5 days)';
+
+  // Blended cost (using real mix, capped at sz 1–3)
+  const blendZS = MIX.reduce((acc, m) => acc + zsTotal(m.sz) * m.pct, 0);
+  const blendRP = MIX.reduce((acc, m) => acc + rpTotal(m.sz, carrier) * m.pct, 0);
+  const blendDiff = blendRP - blendZS; // positive = Zipscale wins
+  const blendAbs = Math.abs(blendDiff);
+
+  // Storage
+  const zsStoMo = pallets * ZS_STORAGE;
+  const rpStoMo = pallets * RP_STORAGE_ACTIVE;
+  const stoSaving = rpStoMo - zsStoMo;
+  const rpReceiving = pallets <= RP_RECEIVING_FREE_MAX ? 0 : RP_RECEIVING_TRUCK;
+  const zsReceiving = pallets * ZS_RECEIVING;
+
+  // Min fee flag
+  const minFeeApplies = moOrd < 100;
+
+  // ─── BANNER ───
+  const bColor = '#15803d', bBg = '#f0fdf4', bBdr = '#86efac';
+  document.getElementById('banner').innerHTML = `
+    <div style="background:${bBg};border:1px solid ${bBdr};border-radius:14px;padding:18px 22px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:220px;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:${bColor};margin-bottom:4px;">Overall Verdict</div>
+        <div style="font-size:17px;font-weight:900;color:${bColor};">Zipscale saves ${f2(blendDiff)}/order on blended basis</div>
+        <div style="font-size:12px;color:#374151;margin-top:6px;line-height:1.7;">
+          Carrier compared: <strong>${carrierLabel}</strong> · ${moOrd.toLocaleString()} orders/month · avg ${avgUnits} units/order
+          ${minFeeApplies ? '<br><strong style="color:#b91c1c;">⚠️ Under 100 orders/mo — Rapid charges $165/month minimum fee</strong>' : ''}
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        ${[1,2,3].map(sz => {
+          const zs = zsTotal(sz), rp = rpTotal(sz, carrier), d = rp - zs;
+          return `<div style="background:#fff;border:1px solid #bbf7d0;border-radius:10px;padding:10px 14px;text-align:center;min-width:100px;">
+            <div style="font-size:10px;color:#64748b;margin-bottom:3px;">${LABEL[sz]}</div>
+            <div style="font-size:14px;font-weight:900;color:#15803d;">ZS ${f2(zs)}</div>
+            <div style="font-size:11px;color:#dc2626;font-weight:700;">RP ${f2(rp)}</div>
+            <div style="font-size:10px;color:#15803d;margin-top:3px;font-weight:700;">Save ${f2(d)}/order</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+
+  // ─── KPI TILES ───
+  const moSaving = blendDiff * moOrd;
+  document.getElementById('kpiTiles').innerHTML = [
+    { lbl:'Blended Savings/Order', val:f2(blendDiff), sub:`Zipscale vs Rapid ${carrier.toUpperCase()}`, cls:'g' },
+    { lbl:'Monthly Savings', val:fi(moSaving), sub:`At ${moOrd.toLocaleString()} orders/month`, cls:'g' },
+    { lbl:'Annual Savings', val:fi(moSaving*12), sub:'Shipping cost only', cls:'g' },
+    { lbl:'Storage Saving/Month', val:fi(stoSaving), sub:`$${rpStoMo.toLocaleString()} Rapid vs $${zsStoMo.toLocaleString()} Zipscale`, cls:'b' },
+  ].map(t => `<div class="tile ${t.cls}"><div class="tile-lbl">${t.lbl}</div><div class="tile-val">${t.val}</div><div class="tile-sub">${t.sub}</div></div>`).join('');
+
+  // ─── MAIN COMPARISON CARDS ───
+  document.getElementById('mainGrid').innerHTML = [1,2,3].map(sz => {
+    const zs = zsTotal(sz);
+    const rp = rpTotal(sz, carrier);
+    const diff = rp - zs;
+    const abs  = Math.abs(diff);
+    const even = abs < 0.05;
+    const zsWins = diff > 0;
+    const winBg  = zsWins ? '#15803d' : even ? '#92400e' : '#d97706';
+    const winTxt = zsWins ? `ZIPSCALE WINS · saves ${f2(diff)}/order` : even ? 'BREAK-EVEN' : `RAPID WINS · saves ${f2(abs)}/order`;
+    const resultCls = zsWins ? 'save' : even ? 'even' : 'extra';
+    const resultTxt = zsWins ? `Zipscale saves ${f2(diff)}/order · ${fi(diff*moOrd)}/month`
+                             : even ? `Essentially equal (${f2(abs)} diff)`
+                             : `Rapid saves ${f2(abs)}/order · ${fi(abs*moOrd)}/month`;
+
+    const addRowZS = sz > 1 ? `<div class="vc-line"><span class="vl">Extra unit picks (${sz-1}×$0.25)</span><span class="vv">${f2(ZS[sz].add)}</span></div>` : '';
+    const addRowRP = sz > 1 ? `<div class="vc-line"><span class="vl">Extra unit picks (${sz-1}×$0.30)</span><span class="vv">${f2((sz-1)*RP_PICK)}</span></div>` : '';
+
+    return `<div class="vc ${zsWins ? 'zs-win' : even ? '' : 'rp-win'}">
+      <div style="background:${winBg};color:#fff;text-align:center;font-size:10px;font-weight:700;padding:6px;letter-spacing:.5px;text-transform:uppercase;">${winTxt}</div>
+      <div class="vc-head"><h3>${LABEL[sz]} per Order</h3><div class="wt">${WGT[sz]}</div></div>
+
+      <div class="vc-side">
+        <div class="vc-side-lbl">Zipscale · 2–5 days</div>
+        <div class="vc-price" style="color:#15803d;">${f2(zs)}</div>
+        <div class="vc-mo">${fi(zs*moOrd)}/month</div>
+        <div class="vc-lines">
+          <div class="vc-line"><span class="vl">Pick &amp; Pack</span><span class="vv">${f2(ZS[sz].pp)}</span></div>
+          ${addRowZS}
+          <div class="vc-line"><span class="vl">Thank you card + package</span><span class="vv">${f2(ZS[sz].card+ZS[sz].pkg)}</span></div>
+          <div class="vc-line"><span class="vl">Shipping Zone 5</span><span class="vv">${f2(ZS[sz].ship)}</span></div>
+          <div class="vc-line vl-total"><span class="vl">Total / order</span><span class="vv">${f2(zs)}</span></div>
+        </div>
+      </div>
+
+      <div class="vc-divider"><span>VS</span></div>
+
+      <div class="vc-side">
+        <div class="vc-side-lbl">Rapid · ${carrierLabel}</div>
+        <div class="vc-price" style="color:#dc2626;">${f2(rp)}</div>
+        <div class="vc-mo">${fi(rp*moOrd)}/month</div>
+        <div class="vc-lines">
+          <div class="vc-line"><span class="vl">Pack rate</span><span class="vv">${f2(RP_PACK)}</span></div>
+          ${addRowRP}
+          <div class="vc-line"><span class="vl">Insert (thank you card)</span><span class="vv">${f2(RP_INSERT)}</span></div>
+          <div class="vc-line"><span class="vl">Shipping Zone 5 (${carrier.toUpperCase()})</span><span class="vv">${f2(rpShip(sz,carrier))}</span></div>
+          <div class="vc-line vl-total"><span class="vl">Total / order</span><span class="vv">${f2(rp)}</span></div>
+        </div>
+      </div>
+
+      <div class="vc-result ${resultCls}">
+        <div class="rv">${resultTxt}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // ─── SUMMARY TABLE ───
+  const rows = [];
+  rows.push(`<tr><td style="font-weight:700;">Zipscale — cost/order</td>
+    ${[1,2,3].map(sz=>`<td class="best">${f2(zsTotal(sz))}</td>`).join('')}
+    <td class="best">${f2(blendZS)}</td></tr>`);
+  rows.push(`<tr><td style="font-weight:700;">Rapid — cost/order</td>
+    ${[1,2,3].map(sz=>`<td style="color:#dc2626;">${f2(rpTotal(sz,carrier))}</td>`).join('')}
+    <td style="color:#dc2626;">${f2(blendRP)}</td></tr>`);
+  rows.push(`<tr style="background:#f0fdf4;"><td style="font-weight:700;color:#15803d;">Zipscale saves / order</td>
+    ${[1,2,3].map(sz=>{const d=rpTotal(sz,carrier)-zsTotal(sz);return `<td style="font-weight:800;color:#15803d;">${f2(d)}</td>`;}).join('')}
+    <td style="font-weight:800;color:#15803d;">${f2(blendDiff)}</td></tr>`);
+  rows.push(`<tr><td>Zipscale — monthly (${moOrd.toLocaleString()} orders)</td>
+    ${[1,2,3].map(sz=>`<td>${fi(zsTotal(sz)*moOrd)}</td>`).join('')}
+    <td>${fi(blendZS*moOrd)}</td></tr>`);
+  rows.push(`<tr><td>Rapid — monthly</td>
+    ${[1,2,3].map(sz=>`<td>${fi(rpTotal(sz,carrier)*moOrd)}</td>`).join('')}
+    <td>${fi(blendRP*moOrd)}</td></tr>`);
+  rows.push(`<tr style="background:#f0fdf4;"><td style="font-weight:700;color:#15803d;">Monthly saving (Zipscale)</td>
+    ${[1,2,3].map(sz=>{const d=(rpTotal(sz,carrier)-zsTotal(sz))*moOrd;return `<td style="font-weight:800;color:#15803d;">${fi(d)}</td>`;}).join('')}
+    <td style="font-weight:800;color:#15803d;">${fi(blendDiff*moOrd)}</td></tr>`);
+  rows.push(`<tr><td style="font-weight:700;">Annual saving (Zipscale)</td>
+    ${[1,2,3].map(sz=>{const d=(rpTotal(sz,carrier)-zsTotal(sz))*moOrd*12;return `<td style="font-weight:700;color:#15803d;">${fi(d)}</td>`;}).join('')}
+    <td style="font-weight:700;color:#15803d;">${fi(blendDiff*moOrd*12)}</td></tr>`);
+  document.getElementById('summaryBody').innerHTML = rows.join('');
+
+  // ─── STORAGE ───
+  document.getElementById('storageComp').innerHTML = `
+    <div class="fee-row"><span class="fn">Zipscale — monthly storage (${pallets} pallets × $20)</span><span class="fv g">${fi(zsStoMo)}/mo</span></div>
+    <div class="fee-row"><span class="fn">Rapid — monthly storage (${pallets} pallets × $25)</span><span class="fv r">${fi(rpStoMo)}/mo</span></div>
+    <div class="fee-row" style="background:#f0fdf4;border-radius:6px;padding:7px 8px;"><span class="fn" style="font-weight:700;color:#15803d;">Storage saving (Zipscale)</span><span class="fv g">${fi(stoSaving)}/mo · ${fi(stoSaving*12)}/yr</span></div>
+    <div style="height:10px;"></div>
+    <div class="fee-row"><span class="fn">Zipscale — one-time receiving ($8 × ${pallets} pallets)</span><span class="fv g">${fi(zsReceiving)}</span></div>
+    <div class="fee-row"><span class="fn">Rapid — one-time receiving</span><span class="fv ${rpReceiving===0?'g':'r'}">${rpReceiving===0?'FREE (≤6 pallets)':fi(rpReceiving)}</span></div>
+    <div style="height:10px;"></div>
+    <div class="fee-row"><span class="fn" style="color:#b45309;">Rapid — inactive stock penalty (&gt;45 days)</span><span class="fv r">$82.50/pallet/mo</span></div>
+    <div class="fee-row"><span class="fn" style="color:#64748b;">Zipscale — no inactive penalty</span><span class="fv g">$20 flat always</span></div>`;
+
+  // ─── RAPID EXTRA FEES ───
+  document.getElementById('rapidFees').innerHTML = `
+    <div class="fee-row"><span class="fn">Shipping deposit (one-time)</span><span class="fv r">${fi(RP_DEPOSIT)}</span></div>
+    <div class="fee-row"><span class="fn">Platform setup (3hr × $121)</span><span class="fv r">${fi(RP_SETUP)}</span></div>
+    <div class="fee-row"><span class="fn">Min. volume fee (&lt;100 orders/mo)</span><span class="fv ${minFeeApplies?'r':'y'}">${minFeeApplies ? '⚠️ $165/mo APPLIES' : '$165/mo (not triggered)'}</span></div>
+    <div class="fee-row"><span class="fn">Shopping cart maintenance</span><span class="fv y">$27.50/mo</span></div>
+    <div class="fee-row"><span class="fn">Returns processing</span><span class="fv y">$0.85/piece</span></div>
+    <div class="fee-row"><span class="fn">Zipscale — all of the above</span><span class="fv g">None / $0</span></div>`;
+  document.getElementById('rapidUpfront').innerHTML =
+    `<strong>Rapid upfront to go live: ${fi(RP_DEPOSIT + RP_SETUP)}</strong> (deposit + setup) before shipping a single order.`;
+
+  // ─── RECOMMENDATION ───
+  const rec = document.getElementById('rec');
+  const annualSave = blendDiff * moOrd * 12;
+  rec.className = 'rec g';
+  document.getElementById('rec-title').textContent = `Stay with Zipscale — saves ${fi(annualSave)}/year`;
+  document.getElementById('rec-body').innerHTML =
+    `<strong>Zipscale is cheaper on every order size</strong> at Zone 5: saves ${f2(rpTotal(1,carrier)-zsTotal(1))} on 1-unit, ${f2(rpTotal(2,carrier)-zsTotal(2))} on 2-unit, and ${f2(rpTotal(3,carrier)-zsTotal(3))} on 3-unit orders.
+    On your blended order mix that's <strong>${f2(blendDiff)}/order · ${fi(blendDiff*moOrd)}/month · ${fi(annualSave)}/year</strong> in shipping savings alone.
+    Add storage savings of <strong>${fi(stoSaving*12)}/year</strong> and no $${(RP_DEPOSIT+RP_SETUP).toLocaleString()} startup cost — Zipscale is the clear choice at current volumes.
+    Rapid would make sense only if you need <strong>FedEx Express / overnight delivery</strong> — their DHL Ground is always more expensive than Zipscale for sub-1lb parcels.`;
+}
+
+calc();
+</script>
+</body>
+</html>
